@@ -1,0 +1,30 @@
+<style>
+  /* Responsive Styles */
+  @media screen and (max-width: 767px) {
+
+  }
+
+  @media screen and (max-width: 575px) {
+
+  }
+</style>
+
+<div class="content" role="main">
+
+  <span>{{ title }} app is running!</span>
+  <br>
+
+</div>
+
+<!--Start of RecordRTC test-->
+
+<div class="section-row">
+<div class="button-row" >
+  <app-record-dialog-box mat-raised-button #tooltip="matTooltip" matTooltip="Start optagelse" color="warn">Start recording</app-record-dialog-box>
+  <button mat-raised-button #tooltip="matTooltip" matTooltip="Stop optagelse" color="primary" >Stop recording</button>
+  <button mat-raised-button >Extra button</button>
+</div>
+
+</div>
+
+<!--End of RecordRTC test-->
