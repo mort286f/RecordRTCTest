@@ -1,4 +1,4 @@
-
+ <video controls id="videoElement"></video>
   <mat-card>
     <mat-card-header style="float: right;">
       <button mat-icon-button (click)="CloseDialog()">
@@ -11,12 +11,13 @@
     </mat-card-title>
 
 
-    <video controls #videoElement></video>
+
 
 
     <mat-card-footer>
       <button mat-raised-button (click)="startRecording()">Start video</button>
       <button mat-raised-button (click)="stopRecording()" >Stop video</button>
-      <button mat-raised-button>Download</button>
+      <button mat-raised-button >Download</button>
     </mat-card-footer>
 </mat-card>
+
