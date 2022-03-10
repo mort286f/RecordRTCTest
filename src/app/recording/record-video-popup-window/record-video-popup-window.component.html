@@ -1,23 +1,24 @@
- <video controls id="videoElement"></video>
-  <mat-card>
-    <mat-card-header style="float: right;">
-      <button mat-icon-button (click)="CloseDialog()">
-        <mat-icon>close</mat-icon>
-      </button>
+<mat-card>
+  <mat-card-header style="float: right;">
+    <button mat-icon-button (click)="CloseDialog()">
+      <mat-icon>close</mat-icon>
+    </button>
 
-    </mat-card-header>
-    <mat-card-title>
-      Optag ny video
-    </mat-card-title>
+  </mat-card-header>
+  <mat-card-title>
+    Optag ny video
+  </mat-card-title>
 
 
+  <video controls id="videoElement"></video>
+  <video id="videoShow"></video>
 
 
 
     <mat-card-footer>
-      <button mat-raised-button (click)="startRecording()">Start video</button>
-      <button mat-raised-button (click)="stopRecording()" >Stop video</button>
-      <button mat-raised-button >Download</button>
+      <button id="btnStart" mat-raised-button (click)="startRecording()">Start video</button>
+      <button id="btnStop" mat-raised-button (click)="stopRecording()" >Stop video</button>
+      <button id="btnDownload" mat-raised-button >Download</button>
     </mat-card-footer>
 </mat-card>
 

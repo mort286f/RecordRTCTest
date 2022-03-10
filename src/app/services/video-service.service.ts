@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { promise } from 'protractor';
-import { observable, Observable, Subject } from 'rxjs';
+import { from, observable, Observable, of, Subject } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
 import { RecordedVideoOutput } from '../interfaces/recorded-video-output';
 import * as RecordRTC from 'recordrtc';
-import { Url } from 'url';
+import * as moment from 'moment';
 
 @Injectable({
   providedIn: 'root'
@@ -12,75 +12,102 @@ import { Url } from 'url';
 @Injectable()
 export class VideoServiceService {
 
-  private videoStream = new MediaStream;
   private recorder: any;
+  private interval: any;
+  private startTime: any;
   private _videoStream = new Subject<MediaStream>();
-  private _recorded = new Subject<RecordedVideoOutput>();
+  private _recorded = new Subject<any>();
   private _recordedUrl = new Subject<string>();
+  private _recordedTime = new Subject<string>();
+  private _recordingFailed = new Subject<string>();
 
   constructor() { }
 
-  getRecordedBlob(): Observable<RecordedVideoOutput> {
-    return this._recorded.asObservable();
-  }
+  // getRecordedBlob(): Observable<RecordedVideoOutput> {
+  //   return this._recorded.asObservable();
+  // }
 
-  getRecordedUrl(): Observable<string> {
-    return this._recordedUrl.asObservable();
-  }
+  // getRecordedTime(): Observable<string> {
+  //   return this._recordedTime.asObservable();
+  // }
 
-  getStream(): Observable<MediaStream> {
-    return this._videoStream.asObservable();
-  }
+  // recordingFailed(): Observable<string> {
+  //   return this._recordingFailed.asObservable();
+  // }
+
+  // getRecordedUrl(): Observable<string> {
+  //   return this._recordedUrl.asObservable();
+  // }
+
+  // getStream(): Observable<MediaStream> {
+  //   return this._videoStream.asObservable();
+  // }
 
 private recordVideo() {
-  this.recorder = new RecordRTC(this.videoStream, {
-    type: 'video',
-    mimeType: 'video/webm',
-    bitsPerSecond: 128000,
-  });
+  // this.recorder = new RecordRTC(this.stream, {
+  //   type: 'video',
+  //   mimeType: 'video/webm',
+  //   bitsPerSecond: 128000,
+  // });
   this.recorder.startRecording();
+  this.startTime = moment();
+  this.interval = setInterval(() => {
+    const currentTime = moment();
+
+  }, 1000);
 }
 
-  startRecording() {
-    return new Observable(observer => {
-      navigator.mediaDevices
-      .getUserMedia({audio: true, video: true})
-      .then((_videoStream) => {
-        this.recordVideo();
-        observer.next(_videoStream);
-      })
-      .catch((error) => {
-        console.log(observer.error(error));
-      })
-    })
+
+  startRecording(): Observable<any> {
+    if(this.recorder) {
+    }
+    const dataToSend = of("steven", "åse", "børge", "lis");
+    console.log(navigator.mediaDevices.getUserMedia({audio: true, video: true}))
+    return from(navigator.mediaDevices.getUserMedia({audio: true, video: true}));
+
+    // return new Observable(observer => {
+    //   navigator.mediaDevices.getUserMedia({video: true, audio: true})
+    //   .then((stream: MediaStream) => {
+    //     observer.next(stream);
+    //     console.log(stream)
+    //   })
+    //   .catch(() => {
+    //     console.log('error occured in VideoService.getUserMedia: ');
+    //   })
+    // })
   }
 
-  processVideo(audioVideoWebMURL: any) {
-    console.log(audioVideoWebMURL);
-    const recordedBlob = this.recorder.getBlob();
-    this.recorder.getDataURL(function (dataURL: any) {});
-    const recordedName = encodeURIComponent('video_' + new Date().getTime() + '.webm');
-    this._recorded.next({blob: recordedBlob, url: audioVideoWebMURL, title: recordedName});
+  abortRecording() {
     this.stopMedia();
   }
+
 
   stopRecording() {
     if(this.recorder) {
 
-      this.recorder.stopRecording(this.processVideo.bind(this))
+      this.recorder.stopRecording(this.processVideo.bind(this));
     }
+  }
+
+  private processVideo(audioVideoWebMURL: any) {
+    const recordedBlob = this.recorder.getBlob();
+    this.recorder.getDataURL(function (dataURL: any) { });
+    const recordedName = encodeURIComponent('video_' + new Date().getTime() + '.webm');
+    this._recorded.next({ blob: recordedBlob, url: audioVideoWebMURL, title: recordedName });
+    this.stopMedia();
   }
 
   private stopMedia() {
     if (this.recorder) {
       this.recorder = null;
-      if (this.videoStream) {
-        this.videoStream.getAudioTracks().forEach(track => track.stop());
-        this.videoStream.getVideoTracks().forEach(track => track.stop());
-        // this.videoStream.stop();
-        // this.videoStream = null;
-      }
+      clearInterval(this.interval);
+      this.startTime = null;
+      // if (this.stream) {
+      //   this.stream.getAudioTracks().forEach((track: MediaStreamTrack) => track.stop());
+      //   this.stream.getVideoTracks().forEach((track: MediaStreamTrack) => track.stop());
+      //   this.stream = null;
+      // }
     }
   }
-
 }
+

@@ -21,39 +21,10 @@ title = 'RecordRTCTest';
 constructor() { }
 isAudioRecording = false;
 isVideoRecording = false;
-private stream:any;
-  private recorder:any;
-  private interval:any;
-  private startTime:any;
-  private _stream = new Subject<MediaStream>();
-  private _recorded = new Subject<RecordedVideoOutput>();
-  private _recordedUrl = new Subject<string>();
-  private _recordingTime = new Subject<string>();
-  private _recordingFailed = new Subject<string>();
 
   ngOnInit(): void {
   }
 
-
-  getRecordedUrl(): Observable<string> {
-    return this._recordedUrl.asObservable();
-  }
-
-  getRecordedBlob(): Observable<RecordedVideoOutput> {
-    return this._recorded.asObservable();
-  }
-
-  getRecordedTime(): Observable<string> {
-    return this._recordingTime.asObservable();
-  }
-
-  recordingFailed(): Observable<string> {
-    return this._recordingFailed.asObservable();
-  }
-
-  getStream(): Observable<MediaStream> {
-    return this._stream.asObservable();
-  }
 
   // startRecording( conf: any ): Promise<any> {
   //   var browser = <any>navigator;

@@ -13,7 +13,6 @@ import { MatCardModule} from '@angular/material/card';
 import { MatIconModule} from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 import { RecordDialogBoxComponent } from './recording/record-dialog-box/record-dialog-box.component';
-import { VideoRecorderComponent } from './recording/video-recorder/video-recorder.component';
 import { VideoServiceService } from './services/video-service.service';
 
 @NgModule({
@@ -22,7 +21,6 @@ import { VideoServiceService } from './services/video-service.service';
     RecordingComponent,
     RecordVideoPopupWindowComponent,
     RecordDialogBoxComponent,
-    VideoRecorderComponent,
   ],
   imports: [
     BrowserModule,

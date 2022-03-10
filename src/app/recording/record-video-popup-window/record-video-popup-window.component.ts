@@ -1,10 +1,10 @@
-import { Component, Inject, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import * as RecordRTC from 'recordRTC';
-import { observable, Observable } from 'rxjs';
+import * as RecordRTC from 'recordrtc';
+import { Observable, of } from 'rxjs';
 import { VideoServiceService } from 'src/app/services/video-service.service';
-import { Stream } from 'stream';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ThisReceiver } from '@angular/compiler';
 
 
 // import {VideoRecordingService} from '../../services/video-service.service';
@@ -22,45 +22,60 @@ export class RecordVideoPopupWindowComponent implements OnInit {
 
 @ViewChild('videoElement') videoElement: any;
 
-  video: any;
+  // video: any;
+  videoStream: any;
   displayControls = true;
   isVideoRecording = false;
   videoBlob: any;
   videoTitle: any;
   blobUrl: any;
-  private record_RTC: any;
+  start: HTMLElement | any;
+  stop: HTMLElement | any;
+  mediaRecorder: MediaRecorder | any;
   // videoElement: HTMLVideoElement = {} as HTMLVideoElement;
-  videoConf = { video: { facingMode: "user", width: 720}, audio: true};
-  private videoSubscription: Observable<any> = new Observable();
 
 
-  //WebcamModule properties
-  public showWebcam = true;
-  public deviceId = String;
-  public videoOptions: MediaTrackConstraints = {
-    width: {ideal: 1024},
-    height: {ideal: 576}
-  };
+  constructor(
+    private dialog: MatDialog,
+    private videoService: VideoServiceService,
+    private ref: ChangeDetectorRef,
+    private sanitizer: DomSanitizer,
+    ) {
 
-  constructor(private dialog: MatDialog, private videoStream: MediaStream, private videoService: VideoServiceService, private ref: ChangeDetectorRef, private sanitizer: DomSanitizer) {
+  //   this.videoService.getRecordedBlob().subscribe((data) => {
+  //     this.videoBlob = data.blob;
+  //     this.videoTitle = data.title;
+  //     this.blobUrl = data.url;
+  //     this.ref.detectChanges();
+  //   });
 
-    this.videoService.getRecordedBlob().subscribe((data) => {
-      this.videoBlob = data.blob;
-      this.videoTitle = data.title;
-      this.blobUrl = this.sanitizer.bypassSecurityTrustUrl(data.url);
-      this.ref.detectChanges();
-    });
-
-    this.videoService.getStream().subscribe((stream) => {
-      this.videoStream = stream;
-      this.ref.detectChanges();
-   });
+  //   this.videoService.getStream().subscribe((stream) => {
+  //     this.videoStream = stream;
+  //     this.ref.detectChanges();
+  //  });
 
 
 
   }
   ngOnInit(): void {
+    this.videoElement = document.querySelector('#videoElement') as HTMLMediaElement;
+    this.start = document.getElementById('btnStart') as HTMLElement;
+    this.stop = document.getElementById('btnStop') as HTMLElement;
+
+    this.start.addEventListener('click', (ev: any)=>{
+      this.mediaRecorder.start();
+      console.log(this.mediaRecorder.state);
+  })
+    this.stop.addEventListener('click', (ev: any)=>{
+      console.log(this.mediaRecorder.state);
+      this.mediaRecorder.stop();
+  });
+
   }
+
+ngOnDestroy(): void {
+    this.videoService.abortRecording();
+}
 
   //Error handling method, called with .then after VideoSuccessCallback is called
   handleError(error: any) {
@@ -69,52 +84,79 @@ export class RecordVideoPopupWindowComponent implements OnInit {
 
 
   startRecording() {
-    if(!this.isVideoRecording){
-      console.log('recording started')
-      this.isVideoRecording = true;
-      this.videoService.startRecording().subscribe(stream => {
-        this.video = this.videoElement = document.querySelector('#videoElement') as HTMLMediaElement;
-        this.video.srcObject = stream;
-        console.log(stream);
-        console.log('video src: ' + this.video.srcObject);
-        this.video.play();
-      });
-      // this.videoSubscription.subscribe(this.VideoSuccessCallback);
+      var constraints = {
+        audio: true,
+        video: {
+          facingMode: "user",
+          width: 649,
+          height: 420,
+        }
+      };
 
-      // navigator.mediaDevices
-      // .getUserMedia(media)
-      // .then(this.VideoSuccessCallback.bind(this), this.handleError.bind(this));
-    }
-  }
+navigator.mediaDevices.getUserMedia(constraints)
+.then((mediaStreamObj) => {
+  var video = document.querySelector('#videoElement') as HTMLMediaElement;
+  video.srcObject = mediaStreamObj;
+  video.onloadedmetadata = function(e) {
+    video.play();
+  };
+  this.mediaRecorder = new MediaRecorder(mediaStreamObj);
+  let chunks: any = [];
 
-  // VideoSuccessCallback(stream: MediaStream) {
-  // console.log('entered video success callback method')
-  // this.videoStream = stream;
-  // const record = new RecordRTC(stream,
-  //   {
-  //     mimeType: 'video/webm',
-  //     bitsPerSecond: 128000,
-  //   });
-  //   console.log("right before startRecording")
-  //   this.record_RTC.startRecording();
-  //   const videoElement: HTMLVideoElement = this.video.nativeElement;
-  //   videoElement.srcObject = stream;
-  //   const videoObs = {
-  //     next:  videoElement.srcObject,
-  //     error: console.log('Error occured in videoObs'),
-  //     complete: console.log('complete')
-  //   }
-  //   return videoObs;
-  //WRONG AND OUTDATED:
-  //video.srcObject = window.URL.createObjectURL(stream);
-  //video.srcObject = window.URL.createObjectURL(videoBlob);
-  // }
+this.mediaRecorder.ondataavailable = function(ev: any) {
+    chunks.push(ev.data);
+}
+this.mediaRecorder.ondataavailable = function(ev: any) {
+  chunks.push(ev.data);
+}
+this.mediaRecorder.onstop = (ev: any)=>{
+    let blob = new Blob(chunks, { 'type' : 'video/mp4;' });
+    chunks = [];
+    let videoURL = window.URL.createObjectURL(blob);
+    const recordedVid = document.querySelector('#videoShow') as HTMLMediaElement;
+    recordedVid.src = videoURL;
+    console.log('blob: ' + blob);
+    console.log('url: ' + videoURL);
+    mediaStreamObj.getTracks()[0].stop();
+    mediaStreamObj.getTracks()[1].stop();
+    this.isVideoRecording = false;
+}});
+}
+
+      // let streamChunks: any = [];
+      // this.isVideoRecording = true;
+      // console.log('recording started')
+      // let video = this.videoElement;
+      // console.log("data from startRecording: " + this.videoService.startRecording());
+      // this.videoService.startRecording().subscribe({
+
+      //   next(stream) {
+      //     console.log("stream" + stream);
+      //     video.srcObject = stream;
+      //     console.log('video: ' + video.srcObject)
+      //     // this.video.play();
+
+      //   },
+      //   error() {
+      //     console.log("error 123");
+      //   },
+      //   complete() {
+      //     console.log('complete' + streamChunks);
+
+      //   }
+      // });
+  // this.isVideoRecording = true;
+  // this.videoService.startRecording().then(stream => {
+  //   this.video.srcObject = stream;
+  //   this.video.play();
+  // }).catch(function (err) {
+  //   console.log("err start recording" + err);
+  // })
 
   stopRecording() {
     if(this.isVideoRecording) {
       this.videoService.stopRecording()
-      this.video.srcObject = this.blobUrl;
-      console.log('blob logged: ' + this.blobUrl);
+      // console.log('blob logged: ' + this.video.srcObject);
       this.isVideoRecording = false;
     }
   }
