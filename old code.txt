@@ -1,0 +1,117 @@
+//   @ViewChild('videoElement')
+//   videoElement = {} as HTMLMediaElement;
+
+//   isVideoRecording = false;
+//   start: any = {};
+//   stop: any = {};
+//   mediaRecorder = {} as MediaRecorder;
+//   // videoElement: any;
+
+
+//   constructor(
+//     private dialog: MatDialog,
+//     private videoService: VideoServiceService,
+//     ) {
+//       // if(!this.videoElement){
+//       //   this.videoElement = document.getElementById('videoElement') as HTMLMediaElement;
+//       // }
+//       console.log('vid: ' + this.videoElement)
+
+//       // this.videoElement = document.querySelector('#videoElement');
+//       if(!this.start) {
+//         this.start = document.getElementById('btnStart');
+//         console.log("start")
+//         this.start.addEventListener('click', ()=>{
+//           if(this.mediaRecorder.state == 'inactive')
+//           this.mediaRecorder.start();
+//           console.log('state after starting: ' + this.mediaRecorder.state);
+//       })
+//       }
+//       if(!this.stop) {
+//         this.stop = document.getElementById('btnStop');
+//         console.log("stop")
+//         this.stop.addEventListener('click', ()=>{
+//           if(this.mediaRecorder.state == 'recording') {
+//             this.mediaRecorder.stop();
+//             console.log('state after stopping: ' + this.mediaRecorder.state)
+//           }
+//         })
+//       }
+//     }
+//     ngOnInit(): void {
+
+//       // this.video = document.querySelector('#videoElement') as HTMLMediaElement;
+//     }
+
+//     ngAfterViewInit(): void {
+//     }
+
+//     ngOnDestroy(): void {
+//       this.videoService.abortRecording();
+//     }
+
+//     //Error handling method, called with .then after VideoSuccessCallback is called
+//     handleError(error: any) {
+//       console.log('Cant play video in the browser. Error: ' + error);
+//     }
+
+
+//     startRecording() {
+//       var constraints = {
+//         audio: true,
+//         video: {
+//           facingMode: "user",
+//           width: 300,
+//           height: 200,
+//         }
+//       };
+//       var video = this.videoElement;
+//       console.log("video: " + video)
+//       this.isVideoRecording = true;
+//       navigator.mediaDevices.getUserMedia(constraints)
+//       .then((mediaStreamObj) => {
+//         console.log("vidElement before: " + this.videoElement)
+//         this.videoElement.srcObject = mediaStreamObj;
+//         this.videoElement.onloadedmetadata = function() {
+//           console.log("vidElement play: " + video)
+//           video.play();
+//         };
+//   this.mediaRecorder = new MediaRecorder(mediaStreamObj);
+//   console.log('media: ' + this.mediaRecorder)
+//   let chunks: any = [];
+
+// this.mediaRecorder.ondataavailable = function(ev) {
+//     chunks.push(ev.data);
+// }
+// this.mediaRecorder.ondataavailable = function(ev) {
+//   chunks.push(ev.data);
+// }
+// this.mediaRecorder.onstop = ()=>{
+//     let blob = new Blob(chunks, { 'type' : 'video/mp4;' });
+//     chunks = [];
+//     let videoURL = window.URL.createObjectURL(blob);
+//     const recordedVid = document.querySelector('#videoShow') as HTMLMediaElement;
+//     recordedVid.src = videoURL;
+//     console.log('blob: ' + blob);
+//     //Stop audio/video channels
+//     console.log('url: ' + videoURL);
+//     mediaStreamObj.getTracks()[0].stop();
+//     mediaStreamObj.getTracks()[1].stop();
+//     mediaStreamObj.getAudioTracks().forEach((track: MediaStreamTrack) => track.stop());
+//     mediaStreamObj.getVideoTracks().forEach((track: MediaStreamTrack) => track.stop());
+//     this.isVideoRecording = false;
+// }});
+// }
+
+// clearRecording() {
+
+// }
+
+
+//   stopRecording() {
+//     if(this.isVideoRecording) {
+//       this.videoService.stopRecording()
+//       console.log('blob logged: ' + this.videoElement);
+//       this.isVideoRecording = false;
+//     }
+//   }
