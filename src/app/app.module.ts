@@ -14,6 +14,8 @@ import { MatIconModule} from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 import { RecordDialogBoxComponent } from './recording/record-dialog-box/record-dialog-box.component';
 import { VideoServiceService } from './services/video-service.service';
+import { MediaStreamDirective } from './recording/record-video-popup-window/mediastreamDirective/media-stream.directive';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -21,6 +23,7 @@ import { VideoServiceService } from './services/video-service.service';
     RecordingComponent,
     RecordVideoPopupWindowComponent,
     RecordDialogBoxComponent,
+    MediaStreamDirective,
   ],
   imports: [
     BrowserModule,
@@ -31,6 +34,7 @@ import { VideoServiceService } from './services/video-service.service';
     MatCardModule,
     MatIconModule,
     MatDialogModule,
+    FormsModule,
   ],
   providers: [
     VideoServiceService,

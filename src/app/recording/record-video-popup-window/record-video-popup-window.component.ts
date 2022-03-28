@@ -3,8 +3,9 @@ import { MatDialog } from '@angular/material/dialog';
 import * as RecordRTC from 'recordrtc';
 import { Observable, of } from 'rxjs';
 import { VideoServiceService } from 'src/app/services/video-service.service';
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ThisReceiver } from '@angular/compiler';
+import { MediaStreamDirective } from './mediastreamDirective/media-stream.directive';
 
 
 // import {VideoRecordingService} from '../../services/video-service.service';
@@ -15,17 +16,22 @@ import { ThisReceiver } from '@angular/compiler';
   selector: 'app-record-video-popup-window',
   templateUrl: './record-video-popup-window.component.html',
   styleUrls: ['./record-video-popup-window.component.css'],
-  changeDetection: ChangeDetectionStrategy.Default
 })
 
 export class RecordVideoPopupWindowComponent implements AfterViewInit {
 
-constructor(private dialog: MatDialog) {
+@ViewChild(MediaStreamDirective)
+public mediaStream!: MediaStreamDirective;
 
-}
+public videoSrc!: SafeUrl;
+constructor(private dialog: MatDialog, private sanitizer: DomSanitizer) { }
 
 ngAfterViewInit(): void {
 
+}
+
+public onVideo(data: Blob): void {
+this.videoSrc = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(data));
 }
 
   CloseDialog(){
