@@ -16,8 +16,6 @@
   <ng-container *ngIf="videoSrc">
     <video style="max-height: 35vh;" [src]="videoSrc"></video>
   </ng-container>
-
-
     <mat-card-footer>
       <button id="btnStart" mat-raised-button (click)="mediaStream.play()">Start video</button>
       <button id="btnStop" mat-raised-button (click)="mediaStream.stop()">Stop video</button>
