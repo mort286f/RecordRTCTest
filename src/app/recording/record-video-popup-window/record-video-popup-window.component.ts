@@ -1,10 +1,6 @@
-import { Component, Inject, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef, ChangeDetectionStrategy, OnDestroy, ElementRef } from '@angular/core';
+import { Component, ViewChild, AfterViewInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import * as RecordRTC from 'recordrtc';
-import { Observable, of } from 'rxjs';
-import { VideoServiceService } from 'src/app/services/video-service.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { ThisReceiver } from '@angular/compiler';
 import { MediaStreamDirective } from './mediastreamDirective/media-stream.directive';
 
 
