@@ -1,4 +1,4 @@
-<mat-card style="height: 80vh;">
+<mat-card style="height: 80vh; margin: 0%;">
   <mat-card-header style="float: right;">
     <button mat-icon-button (click)="CloseDialog()">
       <mat-icon>close</mat-icon>
@@ -12,9 +12,9 @@
 <!--
   <video autoplay controls #videoElement></video>
   <video controls id="videoShow"></video> -->
-  <video playsinline [mediaStream]="{video: true}" (videoRecorded)="onVideo($event)"></video>
+  <video style="max-height: 35vh;" playsinline [mediaStream]="{video: true, audio: true}" (videoRecorded)="onVideo($event)"></video>
   <ng-container *ngIf="videoSrc">
-    <video [src]="videoSrc"></video>
+    <video style="max-height: 35vh;" [src]="videoSrc"></video>
   </ng-container>
 
 
